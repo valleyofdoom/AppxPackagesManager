@@ -1,0 +1,8 @@
+﻿<Application
+    x:Class="AppxPackagesManager.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:AppxPackagesManager"
+    StartupUri="MainWindow/MainWindow.xaml">
+    <Application.Resources />
+</Application>
