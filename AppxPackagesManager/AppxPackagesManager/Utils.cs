@@ -59,7 +59,6 @@ namespace AppxPackagesManager {
                 FriendlyName = friendlyName,
                 RequiredByPackages = new HashSet<string>(),
                 Version = $"{packageVersion.Major}.{packageVersion.Minor}.{packageVersion.Build}",
-                InstallDate = package.InstalledDate,
                 IsNonRemovable = package.SignatureKind == PackageSignatureKind.System || IsPackageFamilyInUninstallBlocklist(package.Id.FamilyName),
                 IsFramework = package.IsFramework,
                 InstallLocation = package.InstalledLocation.Path,
@@ -101,17 +100,22 @@ namespace AppxPackagesManager {
 
             var deploymentOperation = packageManager.RemovePackageAsync(fullPackageName, removalOptions);
 
-            await deploymentOperation;
+            try {
+                await deploymentOperation;
+            } catch (Exception ex) {
+                Console.Error.WriteLine($"error: {fullPackageName} - {ex.Message}");
+                return 1;
+            }
 
             if (deploymentOperation.Status == AsyncStatus.Error) {
                 var deploymentResult = deploymentOperation.GetResults();
-                Console.Error.WriteLine($"{fullPackageName} - {deploymentResult.ErrorText}");
+                Console.Error.WriteLine($"error: {fullPackageName} - {deploymentResult.ErrorText}");
 
                 return 1;
             }
 
             if (deploymentOperation.Status == AsyncStatus.Canceled) {
-                Console.Error.WriteLine($"{fullPackageName} - removal canceled");
+                Console.Error.WriteLine($"error: {fullPackageName} - removal canceled");
                 return 1;
             }
 

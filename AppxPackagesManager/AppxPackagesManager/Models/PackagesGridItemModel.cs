@@ -27,7 +27,6 @@ namespace AppxPackagesManager.Models {
         public string PackageName { get; set; }
         public string RequiredByPackages { get; set; }
         public string Version { get; set; }
-        public string InstallDate { get; set; }
         public string IsNonRemovable { get; set; }
         public string IsFramework { get; set; }
         public string InstallLocation { get; set; }

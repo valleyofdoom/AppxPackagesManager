@@ -1,4 +1,5 @@
-using AppxPackagesManager.Models;
+﻿using AppxPackagesManager.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace AppxPackagesManager.ViewModels {
         private ObservableCollection<PackagesGridItemModel> InternalPackagesGridItems { get; set; }
 
         public RelayCommand RefreshCommand => new RelayCommand(execute => Task.Run(PopulateInternalPackages));
-        public RelayCommand UninstallSelectedCommand => new RelayCommand(execute => Task.Run(UninstallSelectedPackages), canExecute => PackagesGridItems.Count(package => package.IsUninstall) > 0);
+        public RelayCommand UninstallSelectedCommand => new RelayCommand(execute => UninstallSelectedPackages(), canExecute => PackagesGridItems.Count(package => package.IsUninstall) > 0);
         public RelayCommand SelectAllCommand => new RelayCommand(execute => { SelectAllPackages(true); }, canExecute => PackagesGridItems.Count(package => package.IsUninstall) != PackagesGridItems.Count(package => package.CanUninstall));
         public RelayCommand SelectionClearCommand => new RelayCommand(execute => { SelectAllPackages(false); }, canExecute => PackagesGridItems.Count(package => package.IsUninstall) > 0);
 
@@ -97,6 +98,8 @@ namespace AppxPackagesManager.ViewModels {
         }
 
         private void RefreshGridView() {
+            IsWindowEnabled = false;
+
             // gets called in SearchQuery setter but InternalPackagesGridItems is null initially
             if (InternalPackagesGridItems == null) {
                 return;
@@ -153,7 +156,6 @@ namespace AppxPackagesManager.ViewModels {
                     PackageName = package.Key,
                     RequiredByPackages = string.Join("\n", package.Value.RequiredByPackages),
                     Version = package.Value.Version,
-                    InstallDate = package.Value.InstallDate.DateTime.ToString(),
                     IsNonRemovable = package.Value.IsNonRemovable.ToString(),
                     IsFramework = package.Value.IsFramework.ToString(),
                     InstallLocation = package.Value.InstallLocation,
@@ -161,6 +163,7 @@ namespace AppxPackagesManager.ViewModels {
             }
 
             RefreshGridView();
+            IsWindowEnabled = true;
         }
 
         private void SelectAllPackages(bool isSelectAll) {
@@ -193,16 +196,12 @@ namespace AppxPackagesManager.ViewModels {
             var msg = $"Removed {removalSucceeds} package(s)";
 
             if (failedPackages.Count != 0) {
-                msg += $", failed to remove {failedPackages.Count} packages:\n\n{string.Join("\n", failedPackages)}";
+                msg += $", failed to remove {failedPackages.Count} package(s):\n\n{string.Join("\n", failedPackages)}";
             }
 
-            _ = Task.Run(() => {
-                _ = MessageBox.Show(msg, "AppxPackagesManager", MessageBoxButton.OK, failedPackages.Count == 0 ? MessageBoxImage.Information : MessageBoxImage.Asterisk);
-            });
+            _ = MessageBox.Show(msg, "AppxPackagesManager", MessageBoxButton.OK, MessageBoxImage.Information);
 
             PopulateInternalPackages();
-
-            // reallow user interaction
             IsWindowEnabled = true;
         }
     }
