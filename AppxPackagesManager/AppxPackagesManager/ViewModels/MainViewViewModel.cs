@@ -56,7 +56,7 @@ namespace AppxPackagesManager.ViewModels {
             }
         }
 
-        private bool isAllUsersPackages = true;
+        private bool isAllUsersPackages = false;
         public bool IsAllUsersPackages {
             get => isAllUsersPackages;
             set {
