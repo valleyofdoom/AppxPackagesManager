@@ -96,7 +96,7 @@ namespace AppxPackagesManager {
         public static int UninstallPackage(string fullPackageName) {
             // from Microsoft's example
 
-            var deploymentOperation = packageManager.RemovePackageAsync(fullPackageName);
+            var deploymentOperation = packageManager.RemovePackageAsync(fullPackageName, RemovalOptions.RemoveForAllUsers);
 
             // this event is signaled when the operation completes
             var opCompletedEvent = new ManualResetEvent(false);
