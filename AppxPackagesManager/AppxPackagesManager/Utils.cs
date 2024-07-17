@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Linq;
 using Windows.ApplicationModel;
@@ -95,19 +96,12 @@ namespace AppxPackagesManager {
             return packagesDatabase;
         }
 
-        public static int UninstallPackage(string fullPackageName, bool isAllUsersPackages) {
+        public static async Task<int> UninstallPackage(string fullPackageName, bool isAllUsersPackages) {
             var removalOptions = isAllUsersPackages ? RemovalOptions.RemoveForAllUsers : RemovalOptions.None;
 
             var deploymentOperation = packageManager.RemovePackageAsync(fullPackageName, removalOptions);
 
-            // this event is signaled when the operation completes
-            var opCompletedEvent = new ManualResetEvent(false);
-
-            // define the delegate using a statement lambda
-            deploymentOperation.Completed = (depProgress, status) => { _ = opCompletedEvent.Set(); };
-
-            // wait until the operation completes
-            _ = opCompletedEvent.WaitOne();
+            await deploymentOperation;
 
             if (deploymentOperation.Status == AsyncStatus.Error) {
                 var deploymentResult = deploymentOperation.GetResults();

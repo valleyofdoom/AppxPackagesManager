@@ -169,7 +169,7 @@ namespace AppxPackagesManager.ViewModels {
             }
         }
 
-        private void UninstallSelectedPackages() {
+        private async void UninstallSelectedPackages() {
             if (MessageBox.Show($"Are you sure you want to remove {PackagesGridItems.Count(package => package.IsUninstall)} package(s)?", "AppxPackagesManager", MessageBoxButton.YesNo) != MessageBoxResult.Yes) {
                 return;
             }
@@ -182,7 +182,7 @@ namespace AppxPackagesManager.ViewModels {
             foreach (var package in PackagesGridItems) {
                 // only the uninstallable packages should be checked but we can check if it can be uninstalled again
                 if (package.IsUninstall && package.CanUninstall) {
-                    if (Utils.UninstallPackage(package.PackageName, IsAllUsersPackages) != 0) {
+                    if (await Utils.UninstallPackage(package.PackageName, IsAllUsersPackages) != 0) {
                         failedPackages.Add(package.PackageName);
                     } else {
                         removalSucceeds++;
