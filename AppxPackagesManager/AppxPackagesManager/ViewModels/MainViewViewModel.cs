@@ -11,8 +11,8 @@ namespace AppxPackagesManager.ViewModels {
     internal class MainViewViewModel : ViewModelBase {
         private ObservableCollection<PackagesGridItemModel> InternalPackagesGridItems { get; set; }
 
-        public RelayCommand RefreshCommand => new RelayCommand(execute => PopulateInternalPackages());
-        public RelayCommand UninstallSelectedCommand => new RelayCommand(execute => { UninstallSelectedPackages(); }, canExecute => PackagesGridItems.Count(package => package.IsUninstall) > 0);
+        public RelayCommand RefreshCommand => new RelayCommand(execute => Task.Run(PopulateInternalPackages));
+        public RelayCommand UninstallSelectedCommand => new RelayCommand(execute => Task.Run(UninstallSelectedPackages), canExecute => PackagesGridItems.Count(package => package.IsUninstall) > 0);
         public RelayCommand SelectAllCommand => new RelayCommand(execute => { SelectAllPackages(true); }, canExecute => PackagesGridItems.Count(package => package.IsUninstall) != PackagesGridItems.Count(package => package.CanUninstall));
         public RelayCommand SelectionClearCommand => new RelayCommand(execute => { SelectAllPackages(false); }, canExecute => PackagesGridItems.Count(package => package.IsUninstall) > 0);
 
@@ -55,6 +55,16 @@ namespace AppxPackagesManager.ViewModels {
                 RefreshGridView();
             }
         }
+
+        private bool isAllUsersPackages = true;
+        public bool IsAllUsersPackages {
+            get => isAllUsersPackages;
+            set {
+                isAllUsersPackages = value;
+                _ = Task.Run(PopulateInternalPackages);
+            }
+        }
+
 
         private bool isWindowEnabled = true;
         public bool IsWindowEnabled {
@@ -121,13 +131,16 @@ namespace AppxPackagesManager.ViewModels {
             }
 
             PackagesCount = $"Packages: {PackagesGridItems.Count}/{InternalPackagesGridItems.Count}";
+            IsWindowEnabled = true;
         }
 
         private void PopulateInternalPackages() {
+            IsWindowEnabled = false;
+
             // clear items for refresh
             InternalPackagesGridItems = new ObservableCollection<PackagesGridItemModel>();
 
-            var packages = Utils.GetPackagesDatabase();
+            var packages = Utils.GetPackagesDatabase(IsAllUsersPackages);
 
             foreach (var package in packages) {
                 var hasDependencies = package.Value.RequiredByPackages.Count != 0;
@@ -159,16 +172,15 @@ namespace AppxPackagesManager.ViewModels {
                 return;
             }
 
+            IsWindowEnabled = false;
+
             var removalSucceeds = 0;
             var failedPackages = new List<string>();
-
-            // disallow user interaction while removing packages
-            IsWindowEnabled = false;
 
             foreach (var package in PackagesGridItems) {
                 // only the uninstallable packages should be checked but we can check if it can be uninstalled again
                 if (package.IsUninstall && package.CanUninstall) {
-                    if (Utils.UninstallPackage(package.PackageName) != 0) {
+                    if (Utils.UninstallPackage(package.PackageName, IsAllUsersPackages) != 0) {
                         failedPackages.Add(package.PackageName);
                     } else {
                         removalSucceeds++;
@@ -176,10 +188,10 @@ namespace AppxPackagesManager.ViewModels {
                 }
             }
 
-            var msg = $"Removed {removalSucceeds} package(s), failed to remove {failedPackages.Count} package(s):";
+            var msg = $"Removed {removalSucceeds} package(s)";
 
             if (failedPackages.Count != 0) {
-                msg += $"\n\n{string.Join("\n", failedPackages)}";
+                msg += $", failed to remove {failedPackages.Count} packages:\n\n{string.Join("\n", failedPackages)}";
             }
 
             _ = Task.Run(() => {

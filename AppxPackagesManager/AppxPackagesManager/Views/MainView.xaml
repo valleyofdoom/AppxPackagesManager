@@ -23,6 +23,7 @@
                 <ColumnDefinition Width="3*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <TextBox
@@ -35,8 +36,13 @@
                 Margin="0,0,10,0"
                 ItemsSource="{Binding PackageTypes}"
                 SelectedItem="{Binding SelectedPackagesType}" />
-            <Button
+            <CheckBox
                 Grid.Column="2"
+                Margin="0,3,10,0"
+                Content="All-Users Packages"
+                IsChecked="{Binding IsAllUsersPackages}" />
+            <Button
+                Grid.Column="3"
                 Width="100"
                 Height="23"
                 Command="{Binding RefreshCommand}"

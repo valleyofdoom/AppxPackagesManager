@@ -63,11 +63,11 @@ namespace AppxPackagesManager {
             });
         }
 
-        public static Dictionary<string, PackageInfo> GetPackagesDatabase() {
+        public static Dictionary<string, PackageInfo> GetPackagesDatabase(bool isAllUsersPackages) {
             // holds information for all packages
             var packagesDatabase = new Dictionary<string, PackageInfo>();
 
-            var packages = packageManager.FindPackages();
+            var packages = isAllUsersPackages ? packageManager.FindPackages() : packageManager.FindPackagesForUser("");
 
             foreach (var package in packages) {
                 var packageFullName = package.Id.FullName;
@@ -93,10 +93,10 @@ namespace AppxPackagesManager {
             return packagesDatabase;
         }
 
-        public static int UninstallPackage(string fullPackageName) {
-            // from Microsoft's example
+        public static int UninstallPackage(string fullPackageName, bool isAllUsersPackages) {
+            var removalOptions = isAllUsersPackages ? RemovalOptions.RemoveForAllUsers : RemovalOptions.None;
 
-            var deploymentOperation = packageManager.RemovePackageAsync(fullPackageName, RemovalOptions.RemoveForAllUsers);
+            var deploymentOperation = packageManager.RemovePackageAsync(fullPackageName, removalOptions);
 
             // this event is signaled when the operation completes
             var opCompletedEvent = new ManualResetEvent(false);
