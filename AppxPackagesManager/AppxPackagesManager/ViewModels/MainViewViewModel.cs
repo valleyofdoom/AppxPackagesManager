@@ -153,6 +153,7 @@ namespace AppxPackagesManager.ViewModels {
                     PackageName = package.Key,
                     RequiredByPackages = string.Join("\n", package.Value.RequiredByPackages),
                     Version = package.Value.Version,
+                    InstallDate = package.Value.InstallDate.DateTime.ToString(),
                     IsNonRemovable = package.Value.IsNonRemovable.ToString(),
                     IsFramework = package.Value.IsFramework.ToString(),
                     InstallLocation = package.Value.InstallLocation,

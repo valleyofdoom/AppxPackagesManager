@@ -86,6 +86,10 @@
                     Header="Version"
                     IsReadOnly="True" />
                 <DataGridTextColumn
+                    Binding="{Binding InstallDate}"
+                    Header="Install Date"
+                    IsReadOnly="True" />
+                <DataGridTextColumn
                     Binding="{Binding IsNonRemovable}"
                     Header="Non Removable"
                     IsReadOnly="True" />

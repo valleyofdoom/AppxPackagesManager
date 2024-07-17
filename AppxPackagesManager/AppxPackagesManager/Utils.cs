@@ -58,6 +58,7 @@ namespace AppxPackagesManager {
                 FriendlyName = friendlyName,
                 RequiredByPackages = new HashSet<string>(),
                 Version = $"{packageVersion.Major}.{packageVersion.Minor}.{packageVersion.Build}",
+                InstallDate = package.InstalledDate,
                 IsNonRemovable = package.SignatureKind == PackageSignatureKind.System || IsPackageFamilyInUninstallBlocklist(package.Id.FamilyName),
                 IsFramework = package.IsFramework,
                 InstallLocation = package.InstalledLocation.Path,
