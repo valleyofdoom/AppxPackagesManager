@@ -2,9 +2,9 @@
 using System.Windows;
 
 namespace AppxPackagesManager {
-    public partial class MainWindow : Window {
-        public MainWindow() {
-            DataContext = new MainWindowViewModel();
+    public partial class MainView : Window {
+        public MainView() {
+            DataContext = new MainViewViewModel();
             InitializeComponent();
         }
     }

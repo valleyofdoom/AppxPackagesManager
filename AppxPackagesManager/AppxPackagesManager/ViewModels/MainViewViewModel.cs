@@ -8,7 +8,7 @@ using System.Windows;
 
 
 namespace AppxPackagesManager.ViewModels {
-    internal class MainWindowViewModel : ViewModelBase {
+    internal class MainViewViewModel : ViewModelBase {
         private ObservableCollection<PackagesGridItemModel> InternalPackagesGridItems { get; set; }
 
         public RelayCommand RefreshCommand => new RelayCommand(execute => PopulateInternalPackages());
@@ -65,7 +65,7 @@ namespace AppxPackagesManager.ViewModels {
             }
         }
 
-        public MainWindowViewModel() {
+        public MainViewViewModel() {
             // set window title
             var version = Assembly.GetExecutingAssembly().GetName().Version;
             Title = $"AppxPackagesManager v{version.Major}.{version.Minor}.{version.Build}";
