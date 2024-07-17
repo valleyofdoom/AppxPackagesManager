@@ -1,4 +1,4 @@
-﻿using AppxPackagesManager.Models;
+using AppxPackagesManager.Models;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -106,12 +106,12 @@ namespace AppxPackagesManager.ViewModels {
 
             // handle search query
             if (SearchQuery != null && searchQuery != "") {
-                var serachQuery = SearchQuery.ToLower();
+                var searchQuery = SearchQuery.ToLower();
 
                 PackagesGridItems = new ObservableCollection<PackagesGridItemModel>(
                     PackagesGridItems.Where(
                         package => package.PackageName.ToLower().Contains(searchQuery)
-                        || package.FriendlyName.ToLower().Contains(serachQuery)
+                        || package.FriendlyName.ToLower().Contains(searchQuery)
                     )
                 );
             }
