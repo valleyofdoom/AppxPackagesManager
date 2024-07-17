@@ -1,4 +1,5 @@
 ﻿using AppxPackagesManager.ViewModels;
+using System.Windows;
 
 namespace AppxPackagesManager.Models {
     internal class PackagesGridItemModel : ViewModelBase {
@@ -9,6 +10,14 @@ namespace AppxPackagesManager.Models {
         public bool IsUninstall {
             get => isUninstall;
             set {
+                if (
+                    value &&
+                    PackageName != null && // null when program starts
+                    PackageName.ToLower().Contains("windowsstore") &&
+                    MessageBox.Show($"Are you sure you want to remove Microsoft Store? It is not recommended as it can be used to install applications in the future", "AppxPackagesManager", MessageBoxButton.YesNo) != MessageBoxResult.Yes) {
+                    return;
+                }
+
                 isUninstall = value;
                 OnPropertyChanged();
             }
