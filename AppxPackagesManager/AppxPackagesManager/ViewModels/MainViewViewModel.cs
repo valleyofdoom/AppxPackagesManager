@@ -155,6 +155,7 @@ namespace AppxPackagesManager.ViewModels {
                     Version = package.Value.Version,
                     IsNonRemovable = package.Value.IsNonRemovable.ToString(),
                     IsFramework = package.Value.IsFramework.ToString(),
+                    InstallLocation = package.Value.InstallLocation,
                 });
             }
 

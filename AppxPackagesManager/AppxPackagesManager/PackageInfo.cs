@@ -7,5 +7,6 @@ namespace AppxPackagesManager {
         public string Version { get; set; }
         public bool IsNonRemovable { get; set; }
         public bool IsFramework { get; set; }
+        public string InstallLocation { get; set; }
     }
 }

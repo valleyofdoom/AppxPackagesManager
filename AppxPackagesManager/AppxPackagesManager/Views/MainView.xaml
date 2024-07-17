@@ -93,6 +93,10 @@
                     Binding="{Binding IsFramework}"
                     Header="Framework"
                     IsReadOnly="True" />
+                <DataGridTextColumn
+                    Binding="{Binding InstallLocation}"
+                    Header="Install Location"
+                    IsReadOnly="True" />
             </DataGrid.Columns>
         </DataGrid>
 

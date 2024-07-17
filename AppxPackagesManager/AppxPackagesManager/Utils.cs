@@ -60,6 +60,7 @@ namespace AppxPackagesManager {
                 Version = $"{packageVersion.Major}.{packageVersion.Minor}.{packageVersion.Build}",
                 IsNonRemovable = package.SignatureKind == PackageSignatureKind.System || IsPackageFamilyInUninstallBlocklist(package.Id.FamilyName),
                 IsFramework = package.IsFramework,
+                InstallLocation = package.InstalledLocation.Path,
             });
         }
 
