@@ -33,7 +33,7 @@ namespace AppxPackagesManager {
             return displayName;
         }
 
-        private static void AddPackageToDatabase(Dictionary<string, PackageInfo> database, string packageFullName, Package package) {
+        private static string GetPackageFriendlyName(Package package) {
             var friendlyName = "";
 
             try {
@@ -64,11 +64,15 @@ namespace AppxPackagesManager {
                 friendlyName = package.Id.Name;
             }
 
+            return friendlyName;
+        }
+
+        private static void AddPackageToDatabase(Dictionary<string, PackageInfo> database, string packageFullName, Package package) {
             // add package to database
             var packageVersion = package.Id.Version;
 
             database.Add(packageFullName, new PackageInfo {
-                FriendlyName = friendlyName,
+                FriendlyName = GetPackageFriendlyName(package),
                 RequiredByPackages = new HashSet<string>(),
                 Version = $"{packageVersion.Major}.{packageVersion.Minor}.{packageVersion.Build}",
                 IsNonRemovable = package.SignatureKind == PackageSignatureKind.System || IsPackageFamilyInUninstallBlocklist(package.Id.FamilyName),
