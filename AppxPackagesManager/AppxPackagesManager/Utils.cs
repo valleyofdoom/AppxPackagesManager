@@ -34,22 +34,34 @@ namespace AppxPackagesManager {
         }
 
         private static void AddPackageToDatabase(Dictionary<string, PackageInfo> database, string packageFullName, Package package) {
-            var friendlyName = package.Id.Name;
+            var friendlyName = "";
 
-            // attempt to get the friendly name from the manifest
-            var manifestLocation = $"{package.InstalledLocation.Path}\\AppxManifest.xml";
+            try {
+                friendlyName = package.DisplayName;
+            } catch {
+                // ignore as it will be fetched by other means
+            }
 
-            if (File.Exists(manifestLocation)) {
-                try {
-                    var manifestDisplayName = GetManifestFriendlyName(manifestLocation);
+            if (friendlyName == "") {
+                // attempt to get the friendly name from the manifest
+                var manifestLocation = $"{package.InstalledLocation.Path}\\AppxManifest.xml";
 
-                    // ignore invalid display names
-                    if (!manifestDisplayName.StartsWith("ms-resource")) {
-                        friendlyName = manifestDisplayName;
+                if (File.Exists(manifestLocation)) {
+                    try {
+                        var manifestDisplayName = GetManifestFriendlyName(manifestLocation);
+
+                        // ignore invalid display names
+                        if (!manifestDisplayName.StartsWith("ms-resource")) {
+                            friendlyName = manifestDisplayName;
+                        }
+                    } catch (NullReferenceException) {
+                        // ignore
                     }
-                } catch (NullReferenceException) {
-                    // ignore
                 }
+            }
+
+            if (friendlyName == "") {
+                friendlyName = package.Id.Name;
             }
 
             // add package to database
