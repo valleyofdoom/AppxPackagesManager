@@ -71,13 +71,21 @@ namespace AppxPackagesManager {
             // add package to database
             var packageVersion = package.Id.Version;
 
+            var installLocation = "";
+
+            try {
+                installLocation = package.InstalledLocation.Path;
+            } catch (FileNotFoundException) {
+                // ignore
+            }
+
             database.Add(packageFullName, new PackageInfo {
                 FriendlyName = GetPackageFriendlyName(package),
                 RequiredByPackages = new HashSet<string>(),
                 Version = $"{packageVersion.Major}.{packageVersion.Minor}.{packageVersion.Build}",
                 IsNonRemovable = package.SignatureKind == PackageSignatureKind.System || IsPackageFamilyInUninstallBlocklist(package.Id.FamilyName),
                 IsFramework = package.IsFramework,
-                InstallLocation = package.InstalledLocation.Path,
+                InstallLocation = installLocation,
             });
         }
 
