@@ -12,6 +12,7 @@ namespace AppxPackagesManager.Models {
             set {
                 if (
                     value &&
+                    !isUninstall &&
                     PackageName != null && // null when program starts
                     PackageName.ToLower().Contains("windowsstore") &&
                     MessageBox.Show($"Are you sure you want to remove Microsoft Store? It is not recommended as it can be used to install applications in the future", "AppxPackagesManager", MessageBoxButton.YesNo) != MessageBoxResult.Yes) {
